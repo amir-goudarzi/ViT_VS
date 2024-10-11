@@ -15,7 +15,7 @@ def main(configs):
                 attn_dropout=configs.attn_dropout,
                 mlp_size=configs.mlp_size,
                 num_heads=configs.num_heads,
-                num_classes=n_classes)
+                num_classes=n_classes).to(device)
     
     loss_fn = nn.CrossEntropyLoss()
     if configs.adam_optimizer:
