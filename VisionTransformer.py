@@ -146,7 +146,7 @@ class ViT(nn.Module):
         grid_size = shape[1]
         height, width = shape[2], shape[3]
 
-        self.patch_embedding = PatchEmbeddingLayer(freq_encoding= freq_encoding, grid_size= grid_size, input_dim = height * width, output_dim= embedding_dim, embedding_dim= embedding_dim, freq_encoding= False)
+        self.patch_embedding = PatchEmbeddingLayer(freq_encoding= freq_encoding, grid_size= grid_size, input_dim = height * width, output_dim= embedding_dim, embedding_dim= embedding_dim)
         self.transformer = nn.Sequential(
             *[Transformer(embedding_dim= embedding_dim, mlp_dropout= mlp_dropout, attn_dropout= attn_dropout, mlp_size= mlp_size, num_heads= num_heads) for _ in range(num_transformer_layers)]
         )
