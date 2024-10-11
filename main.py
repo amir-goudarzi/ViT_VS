@@ -66,7 +66,7 @@ def main(configs):
 
         acc = (correct / total) * 100
 
-        print(f'Test accuracy: {acc:.2f}')
+        print(f'\n\nTest accuracy: {acc:.2f}')
 
     for epoch in range(configs.num_epochs):
         train(epoch)
