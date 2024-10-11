@@ -9,7 +9,8 @@ def main(configs):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     train_loader, val_loader, test_loader, n_classes = get_loaders(batch_size= configs.batch_size)
     
-    model = ViT(embedding_dim=configs.embedding_dim,
+    model = ViT(freq_encoding=configs.freq_encoding,
+                embedding_dim=configs.embedding_dim,
                 num_transformer_layers=configs.num_transformer_layers,
                 mlp_dropout=configs.mlp_dropout,
                 attn_dropout=configs.attn_dropout,

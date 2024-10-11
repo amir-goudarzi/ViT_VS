@@ -4,6 +4,7 @@ def read_command_line():
 
     parser = argparse.ArgumentParser(description='Vision Transformer')
 
+    parser.add_argument('--freq_encoding', type=bool, required=False, default= True, help='True for frequency-based positional encoding, False for absolute')
     parser.add_argument('--embedding_dim', type=int, required=False, default= 256, help='Embedding dimenstion for the entire model')
     parser.add_argument('--num_transformer_layers', type=int, required=False, default= 3, help='The number of transformer encoder layers')
     parser.add_argument('--mlp_dropout', type=float, required=False, default=0.1, help='Probability of dropout in MLP')

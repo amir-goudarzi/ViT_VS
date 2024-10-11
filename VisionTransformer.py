@@ -2,6 +2,8 @@ import torch
 from torch import nn
 import math
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 class LinearProjection(nn.Module):
     def __init__(self, input_dim, output_dim= 256):
         super().__init__()
@@ -18,13 +20,13 @@ class PositionalEncodingAbs(nn.Module): #Absolute
         super().__init__()
         n = num_patches ** (1/2) # 16 -> n=4
         sub_n = n ** (1/2) # 4 -> 2
-        self.positional_encodings = torch.zeros(num_patches, 3, requires_grad= False)
+        self.positional_encodings = torch.zeros(num_patches, 3, requires_grad= False).to(device)
         for i in range(num_patches):
             row = (i // n)
             column = (i % n)
             grid = (((row // sub_n)) * sub_n) + ((column // sub_n)) # The subgrid that i belongs to
             # print(i + 1, row + 1, column + 1, grid + 1)
-            self.positional_encodings[i] = torch.tensor([row, column, grid]) / num_patches
+            self.positional_encodings[i] = torch.tensor([row, column, grid]).to(device) / num_patches
         self.positional_encodings = torch.stack([self.positional_encodings] * 10, 0)
     def forward(self, x):
         x = torch.cat((x, self.positional_encodings), 2)
@@ -36,12 +38,12 @@ class PositionalEncodingFreq(nn.Module): # Frequency-based
     def __init__(self, d_model= 256, max_seq_length= 16):
         super().__init__()
 
-        pe = torch.zeros(max_seq_length, d_model)
-        position = torch.arange(0, max_seq_length, dtype=torch.float).unsqueeze(1)
-        div_term = torch.exp(torch.arange(0, d_model, 2).float() * -(math.log(10000.0) / d_model))
+        pe = torch.zeros(max_seq_length, d_model).to(device)
+        position = torch.arange(0, max_seq_length, dtype=torch.float).to(device).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2).float() * -(math.log(10000.0) / d_model)).to(device)
 
-        pe[:, 0::2] = torch.sin(position * div_term)
-        pe[:, 1::2] = torch.cos(position * div_term)
+        pe[:, 0::2] = torch.sin(position * div_term).to(device)
+        pe[:, 1::2] = torch.cos(position * div_term).to(device)
 
         self.register_buffer('pe', pe.unsqueeze(0))
 
@@ -137,14 +139,14 @@ class Transformer(nn.Module):
         return x
     
 class ViT(nn.Module):
-    def __init__(self, shape= [10, 16, 28, 28], embedding_dim= 256, num_transformer_layers= 3, mlp_dropout = 0.1, attn_dropout = 0.0, mlp_size = 256, num_heads = 4, num_classes = 2):
+    def __init__(self, shape= [10, 16, 28, 28], freq_encoding= True, embedding_dim= 256, num_transformer_layers= 3, mlp_dropout = 0.1, attn_dropout = 0.0, mlp_size = 256, num_heads = 4, num_classes = 2):
 
         super().__init__()
 
         grid_size = shape[1]
         height, width = shape[2], shape[3]
 
-        self.patch_embedding = PatchEmbeddingLayer(grid_size= grid_size, input_dim = height * width, output_dim= embedding_dim, embedding_dim= embedding_dim, freq_encoding= False)
+        self.patch_embedding = PatchEmbeddingLayer(freq_encoding= freq_encoding, grid_size= grid_size, input_dim = height * width, output_dim= embedding_dim, embedding_dim= embedding_dim, freq_encoding= False)
         self.transformer = nn.Sequential(
             *[Transformer(embedding_dim= embedding_dim, mlp_dropout= mlp_dropout, attn_dropout= attn_dropout, mlp_size= mlp_size, num_heads= num_heads) for _ in range(num_transformer_layers)]
         )
