@@ -43,4 +43,4 @@
         --adam_optimizer "$ADAM_OPTIMIZER" \
         --learning_rate "$LEARNING_RATE" \
         --num_epochs "$NUM_EPOCHS" \
-        --num_workers "&NUM_WORKERS"
+        --num_workers "$NUM_WORKERS"
