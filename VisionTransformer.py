@@ -54,8 +54,8 @@ class PositionalEncodingFreq(nn.Module): # Frequency-based
 class ClassEmbedding(nn.Module):
     def __init__(self, embedding_dim= 256, batch_size= 10):
         super().__init__()
-        self.class_embedding = torch.randn(1, embedding_dim)
-        self.class_embedding = nn.Parameter(torch.stack([self.class_embedding] * batch_size, 0))
+        self.class_embedding = torch.randn(1, embedding_dim).to(device)
+        self.class_embedding = nn.Parameter(torch.stack([self.class_embedding] * batch_size, 0)).to(device)
         # print(self.class_embedding.shape)
 
     def forward(self, x):
