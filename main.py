@@ -7,7 +7,7 @@ from make_dataloader import get_loaders
 def main(configs): 
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    train_loader, val_loader, test_loader, n_classes = get_loaders(batch_size= configs.batch_size)
+    train_loader, val_loader, test_loader, n_classes = get_loaders(batch_size= configs.batch_size, num_workers=configs.num_workers)
     
     model = ViT(freq_encoding=configs.freq_encoding,
                 embedding_dim=configs.embedding_dim,

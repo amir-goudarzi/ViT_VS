@@ -15,6 +15,7 @@ def read_command_line():
     parser.add_argument('--adam_optimizer', type= bool, required=False, default=True, help='True for Adam, False for SGD')
     parser.add_argument('--learning_rate', type= float, required=False, default=0.0001, help='Learning rate')
     parser.add_argument('--num_epochs', type= int, required=False, default=10, help='Number of epochs')
+    parser.add_argument('--num_workers', type= int, required=False, default=1, help='Number of workers')
 
 
     args = parser.parse_args()

@@ -138,7 +138,7 @@ def download_dataset(dataset, path):
             os.remove(path / "data.zip")
 
 
-def get_loaders(batch_size, type="mnist4", split=10):
+def get_loaders(batch_size, type="mnist4", split=10, num_workers=1):
     transform = transforms.Compose(
         [
             transforms.Grayscale(num_output_channels=1),
@@ -212,12 +212,12 @@ def get_loaders(batch_size, type="mnist4", split=10):
                              transform=transform, type=n_classes, split=split)
 
     trainloader = torch.utils.data.DataLoader(train_set, batch_size=batch_size,
-                                              num_workers=12, drop_last=True)
+                                              num_workers=num_workers, drop_last=True)
 
     valloader = torch.utils.data.DataLoader(val_set, batch_size=batch_size,
-                                            num_workers=12, drop_last=True)
+                                            num_workers=num_workers, drop_last=True)
 
     testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
-                                             num_workers=12, drop_last=True)
+                                             num_workers=num_workers, drop_last=True)
 
     return trainloader, valloader, testloader, n_classes
