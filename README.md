@@ -6,7 +6,7 @@ You can use [this notebook](https://colab.research.google.com/drive/1lL5M04cgM_J
 
 ## Installation
 
-1. Clone this repository to your local machine, preferably with a GPU (for instance on Colab):
+1. Clone this repository to your machine:
    ```bash
    git clone https://github.com/Amir-Goudarzi/VisualSudoku
 2. Navigate to the project directory:
