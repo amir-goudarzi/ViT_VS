@@ -1,4 +1,6 @@
 torch
+numpy
+torchvision
 webdataset
 wget 
 pathlib
