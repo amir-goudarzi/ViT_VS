@@ -4,10 +4,10 @@
 
 1. Clone this repository to your machine:
    ```bash
-   git clone https://github.com/Amir-Goudarzi/VisualSudoku
+   git clone https://github.com/Amir-Goudarzi/ViT_VS
 2. Navigate to the project directory:
    ```bash
-   cd VisualSudoku
+   cd ViT_VS
 3. Install the required Python packages from requirements.txt:
    ```bash
    pip install -r requirements.txt
