@@ -1,9 +1,5 @@
 # VisualSudoku
 
-## Quick start
-
-You can use [this notebook](https://colab.research.google.com/drive/1lL5M04cgM_JzPBc3tcTTsyV1oWyakuUu?usp=drive_link) to easily start using the model.
-
 ## Installation
 
 1. Clone this repository to your machine:
