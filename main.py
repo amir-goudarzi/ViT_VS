@@ -21,20 +21,20 @@ def main(args):
         print("Model is using CPU")
 
     params = {
-    "PATCH_SIZE": args.patch_size,
-    "POSITIONAL_ENCODING": args.positional_encoding,
-    "EMBEDDING_DIM": args.embedding_dim,
-    "NUM_TRANSFORMER_LAYERS": args.num_transformer_layers,
-    "MLP_DROPOUT": args.mlp_dropout,
-    "ATTN_DROPOUT": args.attn_dropout,
-    "MLP_SIZE": args.mlp_size,
-    "NUM_HEADS": args.num_heads,
-    "BATCH_SIZE": args.batch_size,
-    "OPTIMIZER": args.optimizer,
-    "LEARNING_RATE": args.learning_rate,
-    "NUM_EPOCHS": args.num_epochs,
-    "NUM_WORKERS": args.num_workers
-}
+        "PATCH_SIZE": args.patch_size,
+        "POSITIONAL_ENCODING": args.positional_encoding,
+        "EMBEDDING_DIM": args.embedding_dim,
+        "NUM_TRANSFORMER_LAYERS": args.num_transformer_layers,
+        "MLP_DROPOUT": args.mlp_dropout,
+        "ATTN_DROPOUT": args.attn_dropout,
+        "MLP_SIZE": args.mlp_size,
+        "NUM_HEADS": args.num_heads,
+        "BATCH_SIZE": args.batch_size,
+        "OPTIMIZER": args.optimizer,
+        "LEARNING_RATE": args.learning_rate,
+        "NUM_EPOCHS": args.num_epochs,
+        "NUM_WORKERS": args.num_workers
+    }
 
     train_loader, val_loader, test_loader, n_classes = get_loaders(batch_size= params['BATCH_SIZE'], 
                                                                    num_workers=params['NUM_WORKERS'], 
