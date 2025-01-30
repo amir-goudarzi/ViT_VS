@@ -1,8 +1,8 @@
 import torch
 from torch import nn
-from VisionTransformer import ViT
-import options
-from make_dataloader import get_loaders
+from src.VisionTransformer import ViT
+import utils.options as options
+from utils.make_dataloader import get_loaders
 
 def main(configs): 
 
