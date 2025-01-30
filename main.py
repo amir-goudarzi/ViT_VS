@@ -2,7 +2,9 @@ import torch
 from torch import nn
 from src.VisionTransformer import ViT
 import utils.options as options
+from utils.scheduler import build_scheduler
 from utils.make_dataloader import get_loaders
+import neptune.new as neptune
 import os
 
 def main(args): 
@@ -39,6 +41,7 @@ def main(args):
                                                                    path= os.path.join(args.dir, args.dataset_path), 
                                                                    split=args.split,
                                                                    return_whole_puzzle=False)    
+    
     model = ViT(freq_encoding=args.freq_encoding,
                 embedding_dim=args.embedding_dim,
                 num_transformer_layers=args.num_transformer_layers,
@@ -49,15 +52,27 @@ def main(args):
                 num_classes=n_classes).to(device)
     
     loss_fn = nn.CrossEntropyLoss()
-    if args.adam_optimizer:
+    if args.optimizer == 'Adam':
         optimizer = torch.optim.Adam(model.parameters(), lr= args.learning_rate)
     else:
         optimizer = torch.optim.SGD(model.parameters(), lr= args.learning_rate)
+
+    if args.scheduler:
+        scheduler = build_scheduler(optimizer, lr=params["LEARNING_RATE"])
+
+    run = neptune.init_run(
+            project=args.neptune_project,
+            api_token=args.neptune_api_token,
+            
+        )
+    run["parameters"] = params
 
     def train(epoch):
 
         correct = 0
         total = 0
+        correct_train = 0
+        total_train = 0
 
         for batch_idx, batch in enumerate(train_loader):
             optimizer.zero_grad()
@@ -67,20 +82,37 @@ def main(args):
             loss = loss_fn(y, sudoku_label)
             loss.backward()
             optimizer.step()
-            print(f'Epoch {epoch+1}, Batch {batch_idx + 1}, Loss: {loss.item():.2f}')
+            predictions = torch.argmax(y, 1)
+            total_train += x.shape[0]
+            correct_train += predictions.eq(sudoku_label).sum().item()
+
+            run[f"train/loss"].log(loss.item())
+
+        train_accuracy = ((correct_train / total_train) * 100)
+
+        print(f'\n\n-----Epoch {epoch+1}, Train accuracy: {train_accuracy:.2f}-----')
+        run[f"train/accuracy"].log(train_accuracy)
 
 
         for batch_idx, batch in enumerate(val_loader):
             x, _, sudoku_label = batch
             x, sudoku_label = x.to(device), sudoku_label.to(device)
             y = model(x)
+            loss = loss_fn(y, sudoku_label)
             predictions = torch.argmax(y, 1)
             total += x.shape[0]
             correct += predictions.eq(sudoku_label).sum().item()
 
+            run[f"val/loss"].log(loss.item())
+
         acc = (correct / total) * 100
 
-        print(f'Epoch {epoch+1}, acc: {acc:.2f}')
+        run[f"val/accuracy"].log(acc)
+
+        print(f'-----Val accuracy: {acc:.2f}-----\n\n')
+
+        if args.scheduler:
+            scheduler.step()
 
 
     def test():
@@ -97,12 +129,15 @@ def main(args):
 
         acc = (correct / total) * 100
 
-        print(f'\n\nTest accuracy: {acc:.2f}')
+        print(f'\n\n\n\n--------Test accuracy: {acc:.2f}-----\n\n\n\n')
+
+    print("\n\n--Started Training--\n\n")
 
     for epoch in range(args.num_epochs):
         train(epoch)
 
     test()
+    run.stop()
 
 if __name__ == "__main__":
     args = options.read_command_line()

@@ -1,0 +1,20 @@
+name: vit_env
+channels:
+  - defaults
+  - conda-forge
+  - pytorch
+  - nvidia
+dependencies:
+  - python=3.10
+  - numpy
+  - matplotlib
+  - timm
+  - webdataset
+  - wget
+  - pathlib
+  - pip
+  - pytorch
+  - tqdm
+  - pytorch-cuda
+  - pip:
+      - neptune-client

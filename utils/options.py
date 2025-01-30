@@ -7,7 +7,8 @@ def read_command_line():
 
     # Model
     parser.add_argument('--patch_size', type=int, required=False, default=28, help="Size of each token")
-    parser.add_argument('--positional_encoding', type=bool, required=False, default=True, help='True for frequency-based positional encoding, False for absolute')
+    parser.add_argument('--positional_encoding', type=str, required=False, default=True, choices=['learned', 'absolute', 'frequency'], 
+                        help='positional encoding')
     parser.add_argument('--embedding_dim', type=int, required=False, default= 256, help='Embedding dimenstion for the entire model')
     parser.add_argument('--num_transformer_layers', type=int, required=False, default= 3, help='The number of transformer encoder layers')
     parser.add_argument('--mlp_dropout', type=float, required=False, default=0.1, help='Probability of dropout in MLP')
@@ -19,6 +20,7 @@ def read_command_line():
     parser.add_argument('--batch_size', type=int, required=False, default=10, help='Batch size')
     parser.add_argument('--optimizer', type=str, required=False, default='Adam', choices=['Adam', 'SGD'], help='Adam or SGD')
     parser.add_argument('--learning_rate', type=float, required=False, default=0.0001, help='Learning rate')
+    parser.add_argument('--scheduler', type= bool, required=False, default=False, help='True for using a learning rate scheduler')
     parser.add_argument('--num_epochs', type=int, required=False, default=10, help='Number of epochs')
     parser.add_argument('--num_workers', type=int, required=False, default=1, help='Number of workers')
 
