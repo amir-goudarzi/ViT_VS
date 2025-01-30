@@ -2,6 +2,8 @@ import torch
 from torch import nn
 import math
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 class LinearProjection(nn.Module):
     def __init__(self, input_dim, output_dim= 256):
         super().__init__()
