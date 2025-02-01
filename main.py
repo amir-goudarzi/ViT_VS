@@ -56,7 +56,7 @@ def main(args):
     if args.optimizer == 'Adam':
         optimizer = torch.optim.Adam(model.parameters(), lr= args.learning_rate)
     else:
-        optimizer = torch.optim.SGD(model.parameters(), lr= args.learning_rate)
+        optimizer = torch.optim.SGD(model.parameters(), lr= args.learning_rate, momentum=0.9)
 
     if args.scheduler:
         scheduler = build_scheduler(optimizer, lr=params["LEARNING_RATE"])
