@@ -60,8 +60,8 @@ class PositionalEncodingLearned(nn.Module):  # Learnable
 class ClassEmbedding(nn.Module):
     def __init__(self, embedding_dim= 256, batch_size= 16):
         super().__init__()
-        self.class_embedding = torch.randn(1, embedding_dim).to(device)
-        self.class_embedding = nn.Parameter(torch.stack([self.class_embedding] * batch_size, 0)).to(device)
+        class_embedding = torch.randn(1, embedding_dim)
+        self.class_embedding = nn.Parameter(torch.stack([class_embedding] * batch_size, 0))
 
     def forward(self, x):
         output = torch.cat([self.class_embedding, x], 1)
