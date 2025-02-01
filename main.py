@@ -42,7 +42,7 @@ def main(args):
                                                                    split=args.split,
                                                                    return_whole_puzzle=False)    
     
-    model = ViT(freq_encoding=args.freq_encoding,
+    model = ViT(encoding=args.positional_encoding,
                 embedding_dim=args.embedding_dim,
                 num_transformer_layers=args.num_transformer_layers,
                 mlp_dropout=args.mlp_dropout,
