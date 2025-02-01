@@ -49,7 +49,8 @@ def main(args):
                 attn_dropout=args.attn_dropout,
                 mlp_size=args.mlp_size,
                 num_heads=args.num_heads,
-                num_classes=n_classes).to(device)
+                num_classes=n_classes,
+                batch_size=args.batch_size).to(device)
     
     loss_fn = nn.CrossEntropyLoss()
     if args.optimizer == 'Adam':

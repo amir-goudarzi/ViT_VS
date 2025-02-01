@@ -7,7 +7,7 @@ def read_command_line():
 
     # Model
     parser.add_argument('--patch_size', type=int, required=False, default=28, help="Size of each token")
-    parser.add_argument('--positional_encoding', type=str, required=False, default=True, choices=['learned', 'absolute', 'frequency'], 
+    parser.add_argument('--positional_encoding', type=str, required=False, default=True, choices=['learned', 'sudoku', 'frequency'], 
                         help='positional encoding')
     parser.add_argument('--embedding_dim', type=int, required=False, default= 256, help='Embedding dimenstion for the entire model')
     parser.add_argument('--num_transformer_layers', type=int, required=False, default= 3, help='The number of transformer encoder layers')
