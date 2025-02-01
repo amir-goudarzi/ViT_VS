@@ -131,6 +131,7 @@ def main(args):
         acc = (correct / total) * 100
 
         print(f'\n\n\n\n--------Test accuracy: {acc:.2f}-----\n\n\n\n')
+        run[f"test/accuracy"].log(acc)
 
     print("\n\n--Started Training--\n\n")
 
