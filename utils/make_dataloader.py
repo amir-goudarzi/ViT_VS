@@ -1,3 +1,9 @@
+'''
+Taken originally from https://github.com/MalumaDev and modified
+
+'''
+
+
 import os
 import sys
 import zipfile
@@ -19,7 +25,7 @@ def bar_progress(current, total, width=80):
     sys.stdout.flush()
 
 
-def sudoku_dataset(path, tr_va_te="train", transform=None, type=4, split=None):
+def sudoku_dataset(path, tr_va_te="train", transform=None, type=4, split=None, return_whole_puzzle=False):
     transform = transform
     type = type
     path_out = Path(path) / f"offline_{tr_va_te}_{split}.tar"
@@ -53,7 +59,6 @@ def sudoku_dataset(path, tr_va_te="train", transform=None, type=4, split=None):
                         if tr_va_te + "_cell_labels" in f:
                             with open(os.path.join(root, f), "r") as liner:
                                 for i, l in enumerate(liner.readlines()):
-                                    # cells = [((c % type, c // type), int(j.split("_")[1])) for c, j in enumerate(l.split("\t"))]
                                     cells = [int(j.split("_")[1]) - (0 if not "EMNIST" in str(path_out) else 11) for c, j in enumerate(l.split("\t"))]
                                     samples_cells.append(cells)
                                     if (tr_va_te == "valid" or tr_va_te == "test") and i >= 100:
@@ -80,11 +85,19 @@ def sudoku_dataset(path, tr_va_te="train", transform=None, type=4, split=None):
                 dst.write(sample)
                 key += 1
 
-    return wds.WebDataset(str(path_out), shardshuffle=True, handler=wds.warn_and_continue).shuffle(
-        100000 if tr_va_te == "train" else 0) \
-        .decode("pil").to_tuple("jpg;png", "cell.pyd", "cls").map_tuple(
-        lambda x: image_to_sub_square(transform(x), type=type),
-        None, None)
+    dataset = wds.WebDataset(str(path_out), shardshuffle=True, handler=wds.warn_and_continue).shuffle(
+            100000 if tr_va_te == "train" else 0) \
+            .decode("pil").to_tuple("jpg;png", "cell.pyd", "cls")
+
+    if return_whole_puzzle:
+        return dataset.map_tuple(
+            lambda x: transform(x),  # Apply the transformation if provided
+            None, None)
+    else:
+        return dataset.map_tuple(
+            lambda x: image_to_sub_square(transform(x), type=type),
+            None, None)
+
 
 
 def image_to_sub_square(image, type=4):
@@ -135,20 +148,20 @@ def download_dataset(dataset, path):
         print("Extracting data")
         with zipfile.ZipFile(path / "data.zip", 'r') as zip_ref:
             zip_ref.extractall(path)
-            os.remove(path / "data.zip")
+            # os.remove(path / "data.zip")
 
 
-def get_loaders(batch_size, type="mnist4", split=10, num_workers=1):
+def get_loaders(batch_size, type="mnist4", split=10, num_workers=12, path='.', return_whole_puzzle=False):
     transform = transforms.Compose(
         [
             transforms.Grayscale(num_output_channels=1),
             transforms.ToTensor(),
             transforms.Normalize((0.1307,), (0.3081,))
         ])
-
+    path = Path(path)
     match type:
         case 'mnist4':
-            path = Path("./data/MNISTx4Sudoku")
+            path = path / Path("./data/MNISTx4Sudoku")
             download_dataset(type, path)
 
             transform = transforms.Compose(
@@ -203,13 +216,13 @@ def get_loaders(batch_size, type="mnist4", split=10, num_workers=1):
             raise ValueError(f"Dataset {type} not supported.")
 
     train_set = sudoku_dataset(path=path, tr_va_te="train",
-                               transform=transform, type=n_classes, split=split)
+                               transform=transform, type=n_classes, split=split, return_whole_puzzle=return_whole_puzzle)
 
     val_set = sudoku_dataset(path=path, tr_va_te="valid",
-                             transform=transform, type=n_classes, split=split)
+                             transform=transform, type=n_classes, split=split, return_whole_puzzle=return_whole_puzzle)
 
     testset = sudoku_dataset(path=path, tr_va_te="test",
-                             transform=transform, type=n_classes, split=split)
+                             transform=transform, type=n_classes, split=split, return_whole_puzzle=return_whole_puzzle)
 
     trainloader = torch.utils.data.DataLoader(train_set, batch_size=batch_size,
                                               num_workers=num_workers, drop_last=True)
