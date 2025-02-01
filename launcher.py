@@ -64,9 +64,6 @@ for params in param_combinations:
     # Skip completed experiments
     if experiment_id in completed_experiments:
         continue
-    with open(completed_experiments_file, "a") as file:
-        file.write(experiment_id + "\n")
-    completed_experiments.add(experiment_id) 
 
 
     # Construct command
@@ -106,8 +103,9 @@ for params in param_combinations:
             print("ERROR:", process.stderr)
 
         print("Process completed with exit code:", process.returncode)
+        with open(completed_experiments_file, "a") as file:
+            file.write(experiment_id + "\n")
+            completed_experiments.add(experiment_id) 
     except subprocess.TimeoutExpired:
         print(f"Experiment timed out after {timeout_seconds} seconds.")
-
-    
     
